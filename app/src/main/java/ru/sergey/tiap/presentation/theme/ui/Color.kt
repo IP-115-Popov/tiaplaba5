@@ -1,4 +1,4 @@
-package ru.sergey.tiap.ui.theme
+package ru.sergey.tiap.presentation.theme.ui
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package ru.sergey.tiap.ui.theme
+package ru.sergey.tiap.presentation.theme.ui
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

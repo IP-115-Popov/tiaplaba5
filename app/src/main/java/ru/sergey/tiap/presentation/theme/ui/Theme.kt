@@ -1,6 +1,5 @@
-package ru.sergey.tiap.ui.theme
+package ru.sergey.tiap.presentation.theme.ui
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
