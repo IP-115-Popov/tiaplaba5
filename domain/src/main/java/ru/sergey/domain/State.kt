@@ -36,4 +36,8 @@ class State {
             this.isFinalState = true
         }
     }
+    // Добавляем функцию copy
+    fun copy(name: String = this.name, path: Map<String, String> = this.path): State {
+        return State(name, path)
+    }
 }

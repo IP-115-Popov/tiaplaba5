@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import ru.sergey.domain.LanguageChecking
 import ru.sergey.domain.State
+import ru.sergey.tiap.models.DKAClass
 import ru.sergey.tiap.models.ShowChain
 
 class ChainScreenViewModel() : ViewModel(){
@@ -30,12 +31,12 @@ class ChainScreenViewModel() : ViewModel(){
         }
     }
     fun checkChain() {
-        val q1 = State("q1", mapOf("a" to "q2", "b" to "q3"))
-        val q2 = State("q2", mapOf("a" to "f"))
-        val q3 = State("q3", mapOf("b" to "f"))
-        val q4 = State("f", mapOf())
-        val DKA : List<State> = listOf(q1,q2,q3,q4)
-
+//        val q1 = State("q1", mapOf("a" to "q2", "b" to "q3"))
+//        val q2 = State("q2", mapOf("a" to "f"))
+//        val q3 = State("q3", mapOf("b" to "f"))
+//        val q4 = State("f", mapOf())
+//        val DKA : List<State> = listOf(q1,q2,q3,q4)
+        val DKA = DKAClass.DKA
         _chains.value = _chains.value.map {chain ->
             chain.copy(isRight =
                 if(LanguageChecking.isBelongs(chain.getChaun().chain, DKA, "q1"))

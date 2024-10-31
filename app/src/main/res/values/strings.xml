@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">tiap</string>
     <string name="add">Add</string>
+    <string name="set_dka">Set DKA</string>
 </resources>
