@@ -55,7 +55,7 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(chains.value) { chain ->
-                ChainItem(chain) { updatedChain ->
+                ChainItem(vm, chain) { updatedChain ->
                     vm.updateChain(updatedChain)
                 }
             }
@@ -96,16 +96,17 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
 
 }
 @Composable
-fun ChainItem(chain: ShowChain, onChainChanged: (ShowChain) -> Unit) {
+fun ChainItem(vm : ChainScreenViewModel,chain: ShowChain, onChainChanged: (ShowChain) -> Unit) {
     val text = chain.chain
     val placeholderText = "chain"
-    StyledTextField(text, placeholderText, chain.isRight)
+    StyledTextField(text, placeholderText, chain.isRight, vm)
 }
 @Composable
 fun  StyledTextField(
     text: MutableState<String>,
     placeholderText: String,
-    isRight : ShowChain.Status
+    isRight : ShowChain.Status,
+    vm: ChainScreenViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var showInfoDialog = remember { mutableStateOf(false) }
@@ -137,7 +138,10 @@ fun  StyledTextField(
             .padding(10.dp)
             .fillMaxWidth(),
         keyboardActions = KeyboardActions(
-            onDone = { keyboardController?.hide() })
+            onDone = {
+                keyboardController?.hide();
+                vm.checkChain()
+            })
     )
     if (showInfoDialog.value) {
         Dialog(onDismissRequest = { showInfoDialog.value = false }) {
