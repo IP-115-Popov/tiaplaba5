@@ -15,8 +15,10 @@ object LanguageChecking {
         }
         val nextStateString = currentState.path.getOrDefault(currentSymbol.toString(), null)
 
-        if (nextStateString == null)//коненый афтомат не нашли следующих состаяний куда перейти
+        if (nextStateString == null) {//коненый афтомат не нашли следующих состаяний куда перейти
             if (currentSymbol != null) return false //строка пуста
+            else return false
+        }
 
         return isBelongs(input.drop(1), dka, nextStateString!!, nextMaxStep)
     }
