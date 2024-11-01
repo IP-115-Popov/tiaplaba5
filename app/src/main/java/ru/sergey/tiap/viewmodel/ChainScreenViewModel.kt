@@ -38,8 +38,9 @@ class ChainScreenViewModel() : ViewModel(){
 //        val DKA : List<State> = listOf(q1,q2,q3,q4)
         val DKA : List<State> = DKAClass.DKA
         _chains.value = _chains.value.map {chain ->
+            val sipleChain = chain.getChaun().chain
             chain.copy(isRight =
-                if(LanguageChecking.isBelongs(chain.getChaun().chain, DKA, "q1"))
+                if(LanguageChecking.isBelongs(sipleChain, DKA, DKA.first().name))
                     ShowChain.Status.isRight
                 else
                     ShowChain.Status.isLeft
