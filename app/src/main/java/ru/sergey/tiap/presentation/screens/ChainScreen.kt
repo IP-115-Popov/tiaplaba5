@@ -1,6 +1,7 @@
 package ru.sergey.tiap.presentation.screens
 
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -52,6 +54,10 @@ import ru.sergey.tiap.viewmodel.ChainScreenViewModel
 @Composable
 fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     val chains = vm.chains.collectAsState()
+    val checkChainToast = Toast.makeText(
+        LocalContext.current,
+        "проверка цепочек", Toast.LENGTH_SHORT
+    )
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(chains.value) { chain ->
@@ -79,6 +85,7 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
         Button(
             onClick = {
                 vm.checkChain()
+                checkChainToast.show()
             },
             Modifier
                 .size(150.dp, height = 120.dp)

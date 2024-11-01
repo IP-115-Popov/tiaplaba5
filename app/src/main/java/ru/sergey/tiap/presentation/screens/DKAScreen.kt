@@ -1,5 +1,6 @@
 package ru.sergey.tiap.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -56,7 +58,10 @@ import ru.sergey.tiap.viewmodel.DKAScreenViewModel
 @Composable
 fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
     val items = vm.DKD.collectAsState()
-
+    val setDKAToast = Toast.makeText(
+        LocalContext.current,
+        "DKA установлен", Toast.LENGTH_SHORT
+    )
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(Modifier.fillMaxSize(0.9f)) {
@@ -83,6 +88,7 @@ fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
             Button(
                 onClick = {
                     vm.setDKA()
+                    setDKAToast.show()
                 },
                 Modifier
                     .fillMaxSize(),
