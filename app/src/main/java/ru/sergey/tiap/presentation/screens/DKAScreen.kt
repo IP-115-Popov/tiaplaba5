@@ -5,23 +5,39 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,12 +51,12 @@ import ru.sergey.tiap.viewmodel.DKAScreenViewModel
 @Composable
 fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
     val items = vm.DKD.collectAsState()
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            items(items.value) { item : State ->
-               StateItem(item) { newItem ->
-                   vm.updateItem(item, newItem)
-               }
+            itemsIndexed(items.value) { index, state->
+                StateItem(index , state ,vm)
             }
         }
         Button(
@@ -57,7 +73,7 @@ fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
             ),   // цвет фона
             border = BorderStroke(3.dp, Color.DarkGray)
         ) {
-            Text(stringResource(R.string.add), fontSize = 25.sp)
+            Text("Add State", fontSize = 25.sp)
         }
         Button(
             onClick = {
@@ -78,19 +94,21 @@ fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
     }
 }
 @Composable
-fun StateItem(state: State, onItemChange: (State) -> Unit) {
+fun StateItem(index : Int, state: State , vm : DKAScreenViewModel) {
     val stateString = remember {mutableStateOf(state.name)}
     val symbol = remember {mutableStateOf(state.name)}
     val nextStateString = remember {mutableStateOf(state.name)}
 
-    var isEditing = remember { mutableStateOf(false) }
     Row {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = "Name")
             TextField(
                 value = stateString.value,
                 textStyle = TextStyle(fontSize=25.sp),
-                onValueChange = {newText -> stateString.value = newText}
+                onValueChange = {
+                    newText -> stateString.value = newText
+                    vm.updateItem(index, stateString.value, symbol.value, nextStateString.value)
+                }
             )
         }
         Column(modifier = Modifier.weight(1f))  {
@@ -102,6 +120,7 @@ fun StateItem(state: State, onItemChange: (State) -> Unit) {
                     // Проверяем, является ли новый текст пустым или равно 1 символу
                     if (newText.length <= 1) {
                         symbol.value = newText // разрешаем обновление
+                        vm.updateItem(index ,stateString.value, symbol.value, nextStateString.value)
                     }
                 }
             )
@@ -111,7 +130,10 @@ fun StateItem(state: State, onItemChange: (State) -> Unit) {
             TextField(
                 value = nextStateString.value,
                 textStyle = TextStyle(fontSize = 25.sp),
-                onValueChange = {newText -> nextStateString.value = newText}
+                onValueChange = {
+                    newText -> nextStateString.value = newText
+                    vm.updateItem(index, stateString.value, symbol.value, nextStateString.value)
+                }
             )
         }
     }
