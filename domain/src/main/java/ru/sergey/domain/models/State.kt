@@ -32,6 +32,7 @@ class State {
     {
         this.name = name
         this.path = path
+        if (name == "f") this.isFinalState = true
         if (path.isEmpty()) {
             this.isFinalState = true
         }
