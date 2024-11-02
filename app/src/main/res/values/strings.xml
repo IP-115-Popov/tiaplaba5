@@ -2,4 +2,12 @@
     <string name="app_name">tiap</string>
     <string name="add">Add</string>
     <string name="set_dka">Set DKA</string>
+    <string name="checkingChains">проверка цепочек</string>
+    <string name="fail_check">нельзя провести проверку</string>
+    <string name="place_chain">Это место для ввода цепочки</string>
+    <string name="close">Закрыть</string>
+    <string name="Additional_information">Дополнительная информация</string>
+    <string name="chain_does_not_fit">Цепочка не подходит</string>
+    <string name="chain_fits">Цепочка подходит</string>
+    <string name="Unchecked">Непроверено</string>
 </resources>

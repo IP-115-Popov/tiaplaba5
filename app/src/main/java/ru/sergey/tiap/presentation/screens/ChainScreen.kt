@@ -52,17 +52,15 @@ import ru.sergey.tiap.viewmodel.ChainScreenViewModel
 fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     val chains = vm.chains.collectAsState()
     val checkChainToast = Toast.makeText(
-        LocalContext.current, "проверка цепочек", Toast.LENGTH_SHORT
+        LocalContext.current, stringResource(R.string.checkingChains), Toast.LENGTH_SHORT
     )
     val failCheckChainToast = Toast.makeText(
-        LocalContext.current, "нельзя провести проверку", Toast.LENGTH_SHORT
+        LocalContext.current, stringResource(R.string.fail_check), Toast.LENGTH_SHORT
     )
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(chains.value) { chain ->
-                ChainItem(vm, chain) { updatedChain ->
-                    vm.updateChain(updatedChain)
-                }
+                ChainItem(vm, chain)
             }
         }
         Button(
@@ -106,7 +104,7 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
 }
 
 @Composable
-fun ChainItem(vm: ChainScreenViewModel, chain: ShowChain, onChainChanged: (ShowChain) -> Unit) {
+fun ChainItem(vm: ChainScreenViewModel, chain: ShowChain) {
     val text = chain.chain
     val placeholderText = "chain"
     StyledTextField(text, placeholderText, chain.isRight, vm)
@@ -120,7 +118,7 @@ fun StyledTextField(
     vm: ChainScreenViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var showInfoDialog = remember { mutableStateOf(false) }
+    val showInfoDialog = remember { mutableStateOf(false) }
 
     OutlinedTextField(
         placeholder = { Text(placeholderText) },
@@ -134,17 +132,19 @@ fun StyledTextField(
             focusedTextColor = Color(0xff222222),
         ),
         leadingIcon = {
-            if (isRight == ShowChain.Status.untested) Icon(
-                Icons.Filled.Refresh, contentDescription = "Непроверено"
-            )
-            else if (isRight == ShowChain.Status.isRight) Icon(
-                Icons.Filled.Check, contentDescription = "Цепочка подходит"
-            )
-            else Icon(Icons.Filled.Clear, contentDescription = "Цепочка не подходит")
+            when (isRight) {
+                ShowChain.Status.untested -> Icon(
+                    Icons.Filled.Refresh, contentDescription = stringResource(R.string.Unchecked)
+                )
+                ShowChain.Status.isRight -> Icon(
+                    Icons.Filled.Check, contentDescription = stringResource(R.string.chain_fits)
+                )
+                else -> Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.chain_does_not_fit))
+            }
         },
         trailingIcon = {
             Icon(Icons.Filled.Info,
-                contentDescription = "Дополнительная информация",
+                contentDescription = stringResource(R.string.Additional_information),
                 Modifier.clickable { showInfoDialog.value = true })
         },
         onValueChange = { newText -> text.value = newText },
@@ -152,7 +152,7 @@ fun StyledTextField(
             .padding(10.dp)
             .fillMaxWidth(),
         keyboardActions = KeyboardActions(onDone = {
-            keyboardController?.hide();
+            keyboardController?.hide()
             vm.checkChain()
         })
     )
@@ -162,10 +162,10 @@ fun StyledTextField(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Это место для ввода цепочки")
+                Text(stringResource(R.string.place_chain))
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = { showInfoDialog.value = false }) {
-                    Text("Закрыть")
+                    Text(stringResource(R.string.close))
                 }
             }
         }
