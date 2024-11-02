@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -34,14 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,17 +46,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.sergey.tiap.R
 import ru.sergey.tiap.models.ShowChain
 import ru.sergey.tiap.viewmodel.ChainScreenViewModel
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     val chains = vm.chains.collectAsState()
     val checkChainToast = Toast.makeText(
-        LocalContext.current,
-        "проверка цепочек", Toast.LENGTH_SHORT
+        LocalContext.current, "проверка цепочек", Toast.LENGTH_SHORT
     )
     val failCheckChainToast = Toast.makeText(
-        LocalContext.current,
-        "нельзя провести проверку", Toast.LENGTH_SHORT
+        LocalContext.current, "нельзя провести проверку", Toast.LENGTH_SHORT
     )
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -109,17 +104,19 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     }
 
 }
+
 @Composable
-fun ChainItem(vm : ChainScreenViewModel,chain: ShowChain, onChainChanged: (ShowChain) -> Unit) {
+fun ChainItem(vm: ChainScreenViewModel, chain: ShowChain, onChainChanged: (ShowChain) -> Unit) {
     val text = chain.chain
     val placeholderText = "chain"
     StyledTextField(text, placeholderText, chain.isRight, vm)
 }
+
 @Composable
-fun  StyledTextField(
+fun StyledTextField(
     text: MutableState<String>,
     placeholderText: String,
-    isRight : ShowChain.Status,
+    isRight: ShowChain.Status,
     vm: ChainScreenViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -137,25 +134,27 @@ fun  StyledTextField(
             focusedTextColor = Color(0xff222222),
         ),
         leadingIcon = {
-            if (isRight == ShowChain.Status.untested) Icon(Icons.Filled.Refresh, contentDescription = "Непроверено")
-            else if (isRight == ShowChain.Status.isRight) Icon(Icons.Filled.Check, contentDescription = "Цепочка подходит")
-            else  Icon(Icons.Filled.Clear, contentDescription = "Цепочка не подходит") },
-        trailingIcon = {
-            Icon(
-                Icons.Filled.Info,
-                contentDescription = "Дополнительная информация",
-                Modifier.clickable {  showInfoDialog.value = true }
+            if (isRight == ShowChain.Status.untested) Icon(
+                Icons.Filled.Refresh, contentDescription = "Непроверено"
             )
+            else if (isRight == ShowChain.Status.isRight) Icon(
+                Icons.Filled.Check, contentDescription = "Цепочка подходит"
+            )
+            else Icon(Icons.Filled.Clear, contentDescription = "Цепочка не подходит")
+        },
+        trailingIcon = {
+            Icon(Icons.Filled.Info,
+                contentDescription = "Дополнительная информация",
+                Modifier.clickable { showInfoDialog.value = true })
         },
         onValueChange = { newText -> text.value = newText },
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide();
-                vm.checkChain()
-            })
+        keyboardActions = KeyboardActions(onDone = {
+            keyboardController?.hide();
+            vm.checkChain()
+        })
     )
     if (showInfoDialog.value) {
         Dialog(onDismissRequest = { showInfoDialog.value = false }) {

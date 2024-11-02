@@ -1,9 +1,6 @@
 package ru.sergey.tiap.viewmodel
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,12 +10,14 @@ import ru.sergey.domain.State
 import ru.sergey.tiap.models.DKAClass
 import ru.sergey.tiap.models.ShowChain
 
-class ChainScreenViewModel() : ViewModel(){
+class ChainScreenViewModel() : ViewModel() {
     private val _chains = MutableStateFlow<List<ShowChain>>(mutableListOf())
     val chains: StateFlow<List<ShowChain>> = _chains.asStateFlow()
 
     fun addChain() {
-        _chains.value = _chains.value + ShowChain(mutableStateOf(""), ShowChain.Status.untested) // Создаем mutableStateOf при добавлении
+        _chains.value = _chains.value + ShowChain(
+            mutableStateOf(""), ShowChain.Status.untested
+        ) // Создаем mutableStateOf при добавлении
     }
 
     fun updateChain(chain: ShowChain) {
@@ -30,22 +29,21 @@ class ChainScreenViewModel() : ViewModel(){
             }
         }
     }
-    fun checkChain() : Boolean {
-        if ( DKAClass.DKA.size < 1) return false //DKA не должен быть пустым
-        if (DKAClass.DKA.all({it -> it.isFinalState == false})) return false//DKA должен иметь конечное сотояние
-//        val q1 = State("q1", mapOf("a" to "q2", "b" to "q3"))
-//        val q2 = State("q2", mapOf("a" to "f"))
-//        val q3 = State("q3", mapOf("b" to "f"))
-//        val q4 = State("f", mapOf())
-//        val DKA : List<State> = listOf(q1,q2,q3,q4)
-        val DKA : List<State> = DKAClass.DKA
-        _chains.value = _chains.value.map {chain ->
+
+    fun checkChain(): Boolean {
+        if (DKAClass.DKA.size < 1) return false //DKA не должен быть пустым
+        if (DKAClass.DKA.all({ it -> it.isFinalState == false })) return false//DKA должен иметь конечное сотояние
+        val DKA: List<State> = DKAClass.DKA
+        _chains.value = _chains.value.map { chain ->
             val sipleChain = chain.getChaun().chain
-            chain.copy(isRight =
-                if(LanguageChecking.isBelongs(sipleChain, DKA, DKA.first().name))
-                    ShowChain.Status.isRight
-                else
-                    ShowChain.Status.isLeft
+            chain.copy(
+                isRight = if (LanguageChecking.isBelongs(
+                        sipleChain,
+                        DKA,
+                        DKA.first().name
+                    )
+                ) ShowChain.Status.isRight
+                else ShowChain.Status.isLeft
             )
         }
         return true

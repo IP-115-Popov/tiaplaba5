@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
@@ -25,7 +24,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.sergey.tiap.presentation.screens.ChainScreen
 import ru.sergey.tiap.presentation.screens.DKAScreen
-import ru.sergey.tiap.presentation.theme.ui.TiapTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,13 +44,15 @@ fun Main() {
             startDestination = NavRoutes.ChainScreen.route,
             modifier = Modifier.fillMaxHeight(0.9f)
         ) {
-            composable(NavRoutes.ChainScreen.route) { ChainScreen()}
-            composable(NavRoutes.DKAScreen.route) { DKAScreen()}
+            composable(NavRoutes.ChainScreen.route) { ChainScreen() }
+            composable(NavRoutes.DKAScreen.route) { DKAScreen() }
         }
-        BottomNavigationBar(navController = navController, modifier = Modifier
-            .fillMaxHeight())
+        BottomNavigationBar(
+            navController = navController, modifier = Modifier.fillMaxHeight()
+        )
     }
 }
+
 @Composable
 fun BottomNavigationBar(navController: NavController, modifier: Modifier = Modifier) {
     NavigationBar(modifier) {
@@ -60,48 +60,41 @@ fun BottomNavigationBar(navController: NavController, modifier: Modifier = Modif
         val currentRoute = backStackEntry.value?.destination?.route
 
         NavBarItems.BarItems.forEach { navItem ->
-            NavigationBarItem(
-                selected = currentRoute == navItem.route,
-                onClick = {
-                    navController.navigate(navItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+            NavigationBarItem(selected = currentRoute == navItem.route, onClick = {
+                navController.navigate(navItem.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
-                },
-                icon = {
-                    Icon(
-                        imageVector = navItem.image,
-                        contentDescription = navItem.title
-                    )
-                },
-                label = {
-                    Text(text = navItem.title)
+                    launchSingleTop = true
+                    restoreState = true
                 }
-            )
+            }, icon = {
+                Icon(
+                    imageVector = navItem.image, contentDescription = navItem.title
+                )
+            }, label = {
+                Text(text = navItem.title)
+            })
         }
     }
 }
+
 data class BarItem(
-    val title: String,
-    val image: ImageVector,
-    val route: String
+    val title: String, val image: ImageVector, val route: String
 )
+
 object NavBarItems {
     val BarItems = listOf(
         BarItem(
-            title = "TaskScreen",
-            image = Icons.Filled.Home,
-            route = NavRoutes.ChainScreen.route
-        ),
-        BarItem(
+            title = "TaskScreen", image = Icons.Filled.Home, route = NavRoutes.ChainScreen.route
+        ), BarItem(
             title = "AstronomicalScreen",
             image = Icons.Filled.Edit,
             route = NavRoutes.DKAScreen.route
-        ))
+        )
+    )
 }
+
 sealed class NavRoutes(val route: String) {
     object ChainScreen : NavRoutes("ChainScreen")
     object DKAScreen : NavRoutes("DKAScreen")
