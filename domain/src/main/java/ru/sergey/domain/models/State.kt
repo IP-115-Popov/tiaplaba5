@@ -41,7 +41,7 @@ class State {
         return State(name, path)
     }
 
-    override fun toString(): String {
+    fun ToString(): String {
         val pathString : String = path.map { (key, value) ->  key + "->" + value}.joinToString(separator = "|")
         return name + ")" + pathString
     }

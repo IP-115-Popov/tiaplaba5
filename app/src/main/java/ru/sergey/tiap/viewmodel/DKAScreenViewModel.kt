@@ -18,12 +18,18 @@ class DKAScreenViewModel(context: Context) : ViewModel() {
     val fileStorage = FileStorageImp(context)
     val downloadUseCase = DownloadUseCase(fileStorage)
     val uploadUseCase = UploadUseCase(fileStorage)
+//    var fileList : List<String> = vm.DownloadDKA("fileListSave")
+//
+//    fun saveFileList() {vm.UploadDKA(fileList, "fileListSave")}
+    var fileList : List<String>
+        get() = downloadUseCase.execute("fileListSave").distinct()
+        set(value) {uploadUseCase.execute(value.distinct(), "fileListSave")}
 
-    fun DownloadDKA(){
-        _items.value = downloadUseCase.execute().map { State(it) }
+    fun DownloadDKA(file : String){
+        _items.value = downloadUseCase.execute(file).map { State(it) }
     }
-    fun UploadDKA(){
-        uploadUseCase.execute(_items.value.map { it.toString() })
+    fun UploadDKA(file : String){
+        uploadUseCase.execute(_items.value.map { it.ToString() }, file)
     }
 
     fun addState() {

@@ -8,8 +8,8 @@ import java.io.OutputStreamWriter
 
 interface FileStorage {
     // Сохранение строк в файл
-    fun saveStrings(strings: List<String>)
+    fun saveStrings(strings: List<String>, file : String)
 
     // Загрузка строк из файла
-    fun loadStrings(): List<String>
+    fun loadStrings(file : String): List<String>
 }

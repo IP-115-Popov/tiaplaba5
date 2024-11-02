@@ -10,13 +10,13 @@ import java.io.OutputStreamWriter
 
 class FileStorageImp(private val context: Context) : FileStorage {
 
-    private fun getFile(): File {
-        return File(context.filesDir, "data.txt") // Имя файла для хранения данных
+    private fun getFile(file : String): File {
+        return File(context.filesDir, file) // Имя файла для хранения данных
     }
 
     // Сохранение строк в файл
-    override fun saveStrings(strings: List<String>) {
-        val file = getFile()
+    override fun saveStrings(strings: List<String>,file : String) {
+        val file = getFile(file)
         FileOutputStream(file).use {
             OutputStreamWriter(it).use { writer ->
                 strings.forEach { string ->
@@ -28,8 +28,8 @@ class FileStorageImp(private val context: Context) : FileStorage {
     }
 
     // Загрузка строк из файла
-    override fun loadStrings(): List<String> {
-        val file = getFile()
+    override fun loadStrings(file : String): List<String> {
+        val file = getFile(file)
         return if (file.exists()) {
             InputStreamReader(FileInputStream(file)).use { inputStreamReader ->
                 inputStreamReader.readLines() // Читаем все строки из файла

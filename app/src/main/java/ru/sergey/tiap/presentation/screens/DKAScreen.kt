@@ -4,17 +4,21 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Surface
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -33,6 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.sergey.domain.models.State
 import ru.sergey.tiap.R
@@ -49,9 +54,23 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
     val errorSetDKAToast = Toast.makeText(
         LocalContext.current, "Добавте состояния", Toast.LENGTH_SHORT
     )
+    val saveDKAToast = Toast.makeText(
+        LocalContext.current, "DKA сохранён", Toast.LENGTH_SHORT
+    )
+    val loadDKAToast = Toast.makeText(
+        LocalContext.current, "DKA загружен", Toast.LENGTH_SHORT
+    )
+    val  selectedItemIsNull= Toast.makeText(
+        LocalContext.current, "Файл не выбран", Toast.LENGTH_SHORT
+    )
+    val  fileExists= Toast.makeText(
+        LocalContext.current, "файл уже существует", Toast.LENGTH_SHORT
+    )
+    val showSaveDialog = remember { mutableStateOf(false) }
+    val showLoadDialog = remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        DkaMenu(vm)
+        DkaMenu(vm, showSaveDialog, showLoadDialog)
         LazyColumn(Modifier.fillMaxSize(0.9f)) {
             itemsIndexed(items.value) { index, state ->
                 StateItem(index, state, vm)
@@ -92,15 +111,121 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
             }
         }
     }
+
+
+    if (showSaveDialog.value) {
+        Dialog(onDismissRequest = { showSaveDialog.value = false }) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var selectedItem : String? = null
+                Text("Сохранить")
+                SingleSelectionList(vm.fileList,{i -> selectedItem = i})
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val newFileName = remember { mutableStateOf("") }
+                TextField(value = newFileName.value,
+                    textStyle = TextStyle(fontSize = 25.sp),
+                    onValueChange = { newText -> newFileName.value = newText })
+
+                Button(onClick = {
+                    if (newFileName.value != "")
+                    {
+                        if (vm.fileList.any({it : String -> it != newFileName.value})) {
+                            vm.UploadDKA(newFileName.value)
+                            vm.fileList = vm.fileList + newFileName.value
+                            saveDKAToast.show()
+                        } else {
+                            fileExists.show()
+                        }
+                    }
+                }) {
+                    Text("Сохранить в новый файл")
+                }
+                Button(onClick = {
+                    if (selectedItem != null) {
+                        vm.UploadDKA(selectedItem!!)
+                        saveDKAToast.show()
+                    } else {
+                        selectedItemIsNull.show()
+                    }
+                }) {
+                    Text("Сохранить")
+                }
+                Button(onClick = {
+                    showSaveDialog.value = false
+                }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        }
+    }
+    if (showLoadDialog.value) {
+        Dialog(onDismissRequest = { showLoadDialog.value = false }) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var selectedItem : String? = null
+                Text("Загрузить")
+                SingleSelectionList(vm.fileList,{i -> selectedItem = i})
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    if (selectedItem != null)
+                    {
+                        vm.DownloadDKA(selectedItem!!)
+                        loadDKAToast.show()
+                    }
+                }) {
+                    Text("Загрузить")
+                }
+                Button(onClick = { showLoadDialog.value = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        }
+    }
 }
 @Composable
-fun DkaMenu(vm : DKAScreenViewModel) {
-    val saveDKAToast = Toast.makeText(
-        LocalContext.current, "DKA сохранён", Toast.LENGTH_SHORT
-    )
-    val loadDKAToast = Toast.makeText(
-        LocalContext.current, "DKA загружен", Toast.LENGTH_SHORT
-    )
+fun SingleSelectionList(
+    items: List<String>,
+    onItemSelected: (String) -> Unit // Функция для обработки выбора
+) {
+    var selectedItem = remember { mutableStateOf<String?>(null) }
+
+    Column {
+        LazyColumn {
+            itemsIndexed(items) { i, item ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    RadioButton(
+                        selected = selectedItem.value == item,
+                        onClick = {
+                            selectedItem.value = if (selectedItem.value == item) null else item
+                            onItemSelected(item) // Вызываем функцию при изменении выбора
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = item)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DkaMenu(vm : DKAScreenViewModel, showSaveDialog: MutableState<Boolean>, showLoadDialog: MutableState<Boolean>) {
+//    val saveDKAToast = Toast.makeText(
+//        LocalContext.current, "DKA сохранён", Toast.LENGTH_SHORT
+//    )
+//    val loadDKAToast = Toast.makeText(
+//        LocalContext.current, "DKA загружен", Toast.LENGTH_SHORT
+//    )
     var expanded = remember { mutableStateOf(false) }
     val items = listOf("Сохранить ДКА", "Загрузить ДКА")
 
@@ -124,12 +249,14 @@ fun DkaMenu(vm : DKAScreenViewModel) {
                         // Обрабатываем выбор элемента меню
                         when (item) {
                             "Сохранить ДКА" -> {
-                                vm.UploadDKA()
-                                saveDKAToast.show()
+                                showSaveDialog.value = true
+                                //vm.UploadDKA()
+                                //saveDKAToast.show()
                             }
                             "Загрузить ДКА" -> {
-                                vm.DownloadDKA()
-                                loadDKAToast.show()
+                                showLoadDialog.value = true
+//                                vm.DownloadDKA()
+//                                loadDKAToast.show()
                             }
                         }
                     },
