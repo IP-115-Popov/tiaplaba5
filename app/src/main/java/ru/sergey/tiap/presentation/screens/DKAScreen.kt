@@ -62,6 +62,10 @@ fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
         LocalContext.current,
         "DKA установлен", Toast.LENGTH_SHORT
     )
+    val errorSetDKAToast = Toast.makeText(
+        LocalContext.current,
+        "Добавте состояния", Toast.LENGTH_SHORT
+    )
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(Modifier.fillMaxSize(0.9f)) {
@@ -87,8 +91,13 @@ fun DKAScreen(vm : DKAScreenViewModel = viewModel()) {
             }
             Button(
                 onClick = {
-                    vm.setDKA()
-                    setDKAToast.show()
+                    if (vm.DKD.value.size > 0) {
+                        vm.setDKA()
+                        setDKAToast.show()
+                    } else {
+                        errorSetDKAToast.show()
+                    }
+
                 },
                 Modifier
                     .fillMaxSize(),

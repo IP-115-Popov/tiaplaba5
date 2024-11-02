@@ -30,7 +30,9 @@ class ChainScreenViewModel() : ViewModel(){
             }
         }
     }
-    fun checkChain() {
+    fun checkChain() : Boolean {
+        if ( DKAClass.DKA.size < 1) return false //DKA не должен быть пустым
+        if (DKAClass.DKA.all({it -> it.isFinalState == false})) return false//DKA должен иметь конечное сотояние
 //        val q1 = State("q1", mapOf("a" to "q2", "b" to "q3"))
 //        val q2 = State("q2", mapOf("a" to "f"))
 //        val q3 = State("q3", mapOf("b" to "f"))
@@ -46,5 +48,6 @@ class ChainScreenViewModel() : ViewModel(){
                     ShowChain.Status.isLeft
             )
         }
+        return true
     }
 }

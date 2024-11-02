@@ -58,6 +58,10 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
         LocalContext.current,
         "проверка цепочек", Toast.LENGTH_SHORT
     )
+    val failCheckChainToast = Toast.makeText(
+        LocalContext.current,
+        "нельзя провести проверку", Toast.LENGTH_SHORT
+    )
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(chains.value) { chain ->
@@ -84,8 +88,11 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
         }
         Button(
             onClick = {
-                vm.checkChain()
-                checkChainToast.show()
+                if (vm.checkChain()) {
+                    checkChainToast.show()
+                } else {
+                    failCheckChainToast.show()
+                }
             },
             Modifier
                 .size(150.dp, height = 120.dp)
