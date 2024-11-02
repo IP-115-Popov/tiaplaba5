@@ -1,5 +1,6 @@
 package ru.sergey.tiap.presentation
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,19 +25,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.sergey.tiap.presentation.screens.ChainScreen
 import ru.sergey.tiap.presentation.screens.DKAScreen
+import ru.sergey.tiap.viewmodel.DKAScreenViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Main()
+            Main(this)
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Main() {
+fun Main(context: Context) {
     val navController = rememberNavController()
     Column {
         NavHost(
@@ -45,7 +47,7 @@ fun Main() {
             modifier = Modifier.fillMaxHeight(0.9f)
         ) {
             composable(NavRoutes.ChainScreen.route) { ChainScreen() }
-            composable(NavRoutes.DKAScreen.route) { DKAScreen() }
+            composable(NavRoutes.DKAScreen.route) { DKAScreen(vm = DKAScreenViewModel(context)) }
         }
         BottomNavigationBar(
             navController = navController, modifier = Modifier.fillMaxHeight()

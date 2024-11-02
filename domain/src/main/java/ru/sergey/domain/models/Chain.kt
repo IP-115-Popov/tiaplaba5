@@ -1,8 +1,8 @@
-package ru.sergey.domain
+package ru.sergey.domain.models
 
 data class Chain(
     var chain: String,
-    var isRight: Chain.Status
+    var isRight: Status
 ) {
     enum class Status {
         isRight,

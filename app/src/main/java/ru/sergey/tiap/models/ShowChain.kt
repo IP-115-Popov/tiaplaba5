@@ -2,7 +2,7 @@ package ru.sergey.tiap.models
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import ru.sergey.domain.Chain
+import ru.sergey.domain.models.Chain
 
 data class ShowChain(
     var chain: MutableState<String>, // Храним ссылку на mutableStateOf
@@ -21,9 +21,9 @@ data class ShowChain(
     fun getChaun(): Chain = Chain(
         chain = chain.value,
         isRight = when (this.isRight) {
-            ShowChain.Status.isRight -> Chain.Status.isRight
-            ShowChain.Status.isLeft -> Chain.Status.isLeft
-            ShowChain.Status.untested -> Chain.Status.untested
+            Status.isRight -> Chain.Status.isRight
+            Status.isLeft -> Chain.Status.isLeft
+            Status.untested -> Chain.Status.untested
         }
     )
 

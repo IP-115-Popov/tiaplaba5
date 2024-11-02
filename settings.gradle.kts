@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "tiap"
 include(":app")
 include(":domain")
+include(":data")

@@ -1,15 +1,31 @@
 package ru.sergey.tiap.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import ru.sergey.domain.State
+import ru.sergey.data.FileStorageImp
+import ru.sergey.domain.UseCase.DownloadUseCase
+import ru.sergey.domain.UseCase.UploadUseCase
+import ru.sergey.domain.models.State
 import ru.sergey.tiap.models.DKAClass
 
-class DKAScreenViewModel() : ViewModel() {
+class DKAScreenViewModel(context: Context) : ViewModel() {
     private val _items = MutableStateFlow<List<State>>(emptyList())
     val DKD: StateFlow<List<State>> = _items.asStateFlow()
+
+    val fileStorage = FileStorageImp(context)
+    val downloadUseCase = DownloadUseCase(fileStorage)
+    val uploadUseCase = UploadUseCase(fileStorage)
+
+    fun DownloadDKA(){
+        _items.value = downloadUseCase.execute().map { State(it) }
+    }
+    fun UploadDKA(){
+        uploadUseCase.execute(_items.value.map { it.toString() })
+    }
+
     fun addState() {
         _items.value = _items.value + State("f)") // Создаем mutableStateOf при добавлении
     }

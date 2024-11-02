@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import ru.sergey.domain.LanguageChecking
-import ru.sergey.domain.State
+import ru.sergey.domain.logic.LanguageChecking
+import ru.sergey.domain.models.State
 import ru.sergey.tiap.models.DKAClass
 import ru.sergey.tiap.models.ShowChain
 

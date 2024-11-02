@@ -1,4 +1,6 @@
-package ru.sergey.domain
+package ru.sergey.domain.logic
+
+import ru.sergey.domain.models.State
 
 object LanguageChecking {
     fun isBelongs(input: String, dka: List<State>, nameStartState : String, maxStep : Int = 20) : Boolean{

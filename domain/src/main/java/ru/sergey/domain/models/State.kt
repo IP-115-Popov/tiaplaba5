@@ -1,4 +1,4 @@
-package ru.sergey.domain
+package ru.sergey.domain.models
 
 class State {
     var isFinalState = false
@@ -39,5 +39,10 @@ class State {
     // Добавляем функцию copy
     fun copy(name: String = this.name, path: Map<String, String> = this.path): State {
         return State(name, path)
+    }
+
+    override fun toString(): String {
+        val pathString : String = path.map { (key, value) ->  key + "->" + value}.joinToString(separator = "|")
+        return name + ")" + pathString
     }
 }
