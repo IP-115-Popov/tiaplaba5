@@ -286,10 +286,14 @@ fun StateItem(index: Int, state: State, vm: DKAScreenViewModel) {
                 })
         }
         val keys = remember {
-            mutableStateListOf<String>("")
+            val k = state.path.keys.toTypedArray()
+            if (k.size == 0) mutableStateListOf<String>("")
+            else mutableStateListOf<String>(*k)
         }
         val values = remember {
-            mutableStateListOf<String>("")
+            val v = state.path.values.toTypedArray()
+            if (v.size == 0) mutableStateListOf<String>("")
+            else mutableStateListOf<String>(*v)
         }
         Column(modifier = Modifier.weight(3f)) {
 //           keys.forEachIndexed { indexPath, key ->
