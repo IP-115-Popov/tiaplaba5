@@ -2,6 +2,8 @@ package ru.sergey.tiap.presentation.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -42,6 +45,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.sergey.domain.models.State
 import ru.sergey.tiap.R
+import ru.sergey.tiap.presentation.theme.ui.Pink80
 import ru.sergey.tiap.viewmodel.DKAScreenViewModel
 
 
@@ -78,7 +82,15 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
     val showLoadDialog = remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        DkaMenu(vm, showSaveDialog, showLoadDialog)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp), // Добавляем отступ 8 dp
+            horizontalArrangement = Arrangement.End
+        ) {
+            DkaMenu(vm, showSaveDialog, showLoadDialog)
+        }
+
         LazyColumn(Modifier.fillMaxSize(0.9f)) {
             itemsIndexed(items.value) { index, state ->
                 StateItem(index, state, vm)
@@ -124,7 +136,7 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
     if (showSaveDialog.value) {
         Dialog(onDismissRequest = { showSaveDialog.value = false }) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(16.dp).background(Pink80, RoundedCornerShape(20.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var selectedItem : String? = null
@@ -172,7 +184,7 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
     if (showLoadDialog.value) {
         Dialog(onDismissRequest = { showLoadDialog.value = false }) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(16.dp).background(Pink80, RoundedCornerShape(20.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var selectedItem : String? = null
@@ -232,7 +244,6 @@ fun DkaMenu(vm : DKAScreenViewModel, showSaveDialog: MutableState<Boolean>, show
     val items = listOf("Сохранить ДКА", "Загрузить ДКА")
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = { expanded.value = true }) {
