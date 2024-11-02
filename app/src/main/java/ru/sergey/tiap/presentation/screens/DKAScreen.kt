@@ -22,6 +22,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -47,7 +48,14 @@ import ru.sergey.tiap.viewmodel.DKAScreenViewModel
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
-    val items = vm.DKD.collectAsState()
+    //val items = vm.DKD.collectAsState()
+    val items = remember { mutableStateOf(vm.DKD.value) } // Используем mutableStateOf
+    LaunchedEffect(key1 = vm.DKD) {
+        vm.DKD.collect { newItems ->
+            items.value = newItems
+        }
+    }
+
     val setDKAToast = Toast.makeText(
         LocalContext.current, "DKA установлен", Toast.LENGTH_SHORT
     )
@@ -220,12 +228,6 @@ fun SingleSelectionList(
 
 @Composable
 fun DkaMenu(vm : DKAScreenViewModel, showSaveDialog: MutableState<Boolean>, showLoadDialog: MutableState<Boolean>) {
-//    val saveDKAToast = Toast.makeText(
-//        LocalContext.current, "DKA сохранён", Toast.LENGTH_SHORT
-//    )
-//    val loadDKAToast = Toast.makeText(
-//        LocalContext.current, "DKA загружен", Toast.LENGTH_SHORT
-//    )
     var expanded = remember { mutableStateOf(false) }
     val items = listOf("Сохранить ДКА", "Загрузить ДКА")
 

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -26,19 +27,23 @@ import androidx.navigation.compose.rememberNavController
 import ru.sergey.tiap.presentation.screens.ChainScreen
 import ru.sergey.tiap.presentation.screens.DKAScreen
 import ru.sergey.tiap.viewmodel.DKAScreenViewModel
+import ru.sergey.tiap.viewmodel.DKAScreenViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+            //val dkaViewModel = DKAScreenViewModel(this)
+        val dkaViewModel = ViewModelProvider(this, DKAScreenViewModelFactory(this))
+            .get(DKAScreenViewModel::class.java)
         setContent {
-            Main(this)
+            Main(this, dkaViewModel)
         }
     }
 }
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Main(context: Context) {
+fun Main(context: Context, dkaViewModel : DKAScreenViewModel) {
     val navController = rememberNavController()
     Column {
         NavHost(
@@ -47,7 +52,7 @@ fun Main(context: Context) {
             modifier = Modifier.fillMaxHeight(0.9f)
         ) {
             composable(NavRoutes.ChainScreen.route) { ChainScreen() }
-            composable(NavRoutes.DKAScreen.route) { DKAScreen(vm = DKAScreenViewModel(context)) }
+            composable(NavRoutes.DKAScreen.route) { DKAScreen(vm = dkaViewModel) }
         }
         BottomNavigationBar(
             navController = navController, modifier = Modifier.fillMaxHeight()
