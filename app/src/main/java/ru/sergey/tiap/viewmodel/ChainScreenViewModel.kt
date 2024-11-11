@@ -1,51 +1,39 @@
 package ru.sergey.tiap.viewmodel
 
+import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import ru.sergey.domain.logic.LanguageChecking
-import ru.sergey.domain.models.State
-import ru.sergey.tiap.models.DKAClass
-import ru.sergey.tiap.models.ShowChain
+import ru.sergey.domain.logic.VerificationDPMA
+import ru.sergey.domain.models.Chain
+
+import ru.sergey.tiap.models.DPMAClass
 
 class ChainScreenViewModel() : ViewModel() {
-    private val _chains = MutableStateFlow<List<ShowChain>>(mutableListOf())
-    val chains: StateFlow<List<ShowChain>> = _chains.asStateFlow()
+    private val _chain = MutableStateFlow<Chain>(Chain(
+        chain = "",
+        isRight = Chain.Status.isLeft
+    ))
+    val chain: StateFlow<Chain> = _chain.asStateFlow()
 
-    fun addChain() {
-        _chains.value = _chains.value + ShowChain(
-            mutableStateOf(""), ShowChain.Status.untested
-        ) // Создаем mutableStateOf при добавлении
+
+
+    fun updateChain(chain: Chain) {
+        _chain.value = chain
     }
 
-    fun updateChain(chain: ShowChain) {
-        _chains.value = _chains.value.map {
-            if (it.chain == chain.chain) {
-                chain
-            } else {
-                it
-            }
-        }
-    }
+    fun checkChain() {
+        if (DPMAClass.DPMA.size < 1) return  //DKA не должен быть пустым
 
-    fun checkChain(): Boolean {
-        if (DKAClass.DKA.size < 1) return false //DKA не должен быть пустым
-        if (DKAClass.DKA.all({ it -> it.isFinalState == false })) return false//DKA должен иметь конечное сотояние
-        val DKA: List<State> = DKAClass.DKA
-        _chains.value = _chains.value.map { chain ->
-            val sipleChain = chain.getChaun().chain
-            chain.copy(
-                isRight = if (LanguageChecking.isBelongs(
-                        sipleChain,
-                        DKA,
-                        DKA.first().name
-                    )
-                ) ShowChain.Status.isRight
-                else ShowChain.Status.isLeft
-            )
-        }
-        return true
+        val DPMA = DPMAClass.DPMA
+
+        val sipleChain = _chain.value.chain
+        val rez = VerificationDPMA.isPrenadlezhit("q0", _chain.value.chain, DPMA)
+
+        Log.i("myLog",rez)
+
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -27,7 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,14 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.sergey.domain.models.Chain
 import ru.sergey.tiap.R
-import ru.sergey.tiap.models.ShowChain
 import ru.sergey.tiap.viewmodel.ChainScreenViewModel
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
-    val chains = vm.chains.collectAsState()
+    val chain = vm.chain.collectAsState()
     val checkChainToast = Toast.makeText(
         LocalContext.current, stringResource(R.string.checkingChains), Toast.LENGTH_SHORT
     )
@@ -58,34 +57,12 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
         LocalContext.current, stringResource(R.string.fail_check), Toast.LENGTH_SHORT
     )
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn {
-            items(chains.value) { chain ->
-                ChainItem(vm, chain)
-            }
-        }
+
+        StyledTextField(chain, placeholderText = "chain", chain.value.isRight, vm)
+
         Button(
             onClick = {
-                vm.addChain()
-            },
-            Modifier
-                .size(150.dp, height = 120.dp)
-                .padding(top = 50.dp)
-                .align(Alignment.BottomEnd),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color(0xff004D40),       // цвет текста
-                containerColor = Color(0xff9ed6df)
-            ),   // цвет фона
-            border = BorderStroke(3.dp, Color.DarkGray)
-        ) {
-            Text(stringResource(R.string.add), fontSize = 25.sp)
-        }
-        Button(
-            onClick = {
-                if (vm.checkChain()) {
-                    checkChainToast.show()
-                } else {
-                    failCheckChainToast.show()
-                }
+                vm.checkChain()
             },
             Modifier
                 .size(150.dp, height = 120.dp)
@@ -102,19 +79,11 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     }
 
 }
-
-@Composable
-fun ChainItem(vm: ChainScreenViewModel, chain: ShowChain) {
-    val text = chain.chain
-    val placeholderText = "chain"
-    StyledTextField(text, placeholderText, chain.isRight, vm)
-}
-
 @Composable
 fun StyledTextField(
-    text: MutableState<String>,
+    text: State<Chain>,
     placeholderText: String,
-    isRight: ShowChain.Status,
+    isRight: Chain.Status,
     vm: ChainScreenViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -122,7 +91,7 @@ fun StyledTextField(
 
     OutlinedTextField(
         placeholder = { Text(placeholderText) },
-        value = text.value,
+        value = text.value.chain,
         singleLine = true,
         textStyle = TextStyle(fontSize = 25.sp),
         colors = TextFieldDefaults.colors(
@@ -133,10 +102,10 @@ fun StyledTextField(
         ),
         leadingIcon = {
             when (isRight) {
-                ShowChain.Status.untested -> Icon(
+                Chain.Status.untested -> Icon(
                     Icons.Filled.Refresh, contentDescription = stringResource(R.string.Unchecked)
                 )
-                ShowChain.Status.isRight -> Icon(
+                Chain.Status.isRight -> Icon(
                     Icons.Filled.Check, contentDescription = stringResource(R.string.chain_fits)
                 )
                 else -> Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.chain_does_not_fit))
@@ -147,7 +116,7 @@ fun StyledTextField(
                 contentDescription = stringResource(R.string.Additional_information),
                 Modifier.clickable { showInfoDialog.value = true })
         },
-        onValueChange = { newText -> text.value = newText },
+        onValueChange = { newText -> text.value.chain = newText },
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),

@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import ru.sergey.State
 import ru.sergey.data.FileStorageImp
 import ru.sergey.domain.UseCase.DownloadUseCase
 import ru.sergey.domain.UseCase.UploadUseCase
-import ru.sergey.domain.models.State
-import ru.sergey.tiap.models.DKAClass
+import ru.sergey.tiap.models.DPMAClass
 
 class DKAScreenViewModel(context: Context) : ViewModel() {
     private val _items = MutableStateFlow<List<State>>(emptyList())
@@ -18,9 +18,7 @@ class DKAScreenViewModel(context: Context) : ViewModel() {
     val fileStorage = FileStorageImp(context)
     val downloadUseCase = DownloadUseCase(fileStorage)
     val uploadUseCase = UploadUseCase(fileStorage)
-//    var fileList : List<String> = vm.DownloadDKA("fileListSave")
-//
-//    fun saveFileList() {vm.UploadDKA(fileList, "fileListSave")}
+
     var fileList : List<String>
         get() = downloadUseCase.execute("fileListSave").distinct()
         set(value) {uploadUseCase.execute(value.distinct(), "fileListSave")}
@@ -61,8 +59,7 @@ class DKAScreenViewModel(context: Context) : ViewModel() {
         //проверил значение приходит надо занести
         _items.value = _items.value.mapIndexed { indexInMap, it ->
             if (index == indexInMap) {
-                //не может быть новых элементов изменяем
-                it.copy(path = symbols.zipToMap(newStatesString))
+                it
             } else {
                 it
             }
@@ -72,8 +69,7 @@ class DKAScreenViewModel(context: Context) : ViewModel() {
     fun addPathToState(index: Int, symbol: String, newStateString: String) {
         _items.value = _items.value.mapIndexed { indexInMap, it ->
             if (index == indexInMap) {
-                val path: Map<String, String> = it.path + mapOf(symbol to newStateString);
-                it.copy(path = path)
+                it
             } else {
                 it
             }
@@ -95,12 +91,22 @@ class DKAScreenViewModel(context: Context) : ViewModel() {
             return groupedItems.map { (name, path) ->
                 // Объединяем вложенные map для элементов с одинаковым именем
                 val mergedMap = path.fold(HashMap<String, String>()) { acc, item ->
-                    acc.putAll(item.path) // Добавляем элементы из каждого вложенного map
                     acc
                 }
-                State(name, mergedMap)
+                State("")
             }
         }
-        DKAClass.DKA = mergeItems(_items.value)
+        DPMAClass.DPMA = mergeItems(_items.value)
+    }
+
+    fun updateItem(index: Int, newItem: State) {
+        _items.value = _items.value.mapIndexed { indexInMap, it ->
+            if (index == indexInMap) {
+                //нашли изменёный элемент
+                newItem
+            } else {
+                it
+            }
+        }
     }
 }

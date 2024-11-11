@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -32,7 +31,6 @@ import ru.sergey.tiap.viewmodel.DKAScreenViewModelFactory
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            //val dkaViewModel = DKAScreenViewModel(this)
         val dkaViewModel = ViewModelProvider(this, DKAScreenViewModelFactory(this))
             .get(DKAScreenViewModel::class.java)
         setContent {

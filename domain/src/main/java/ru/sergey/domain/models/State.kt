@@ -1,49 +1,53 @@
-package ru.sergey.domain.models
+package ru.sergey
 
 class State {
-    var isFinalState = false
-    var name : String
-    var path : Map<String, String> // symvol , nameNextState
-    constructor(string: String) {
-        val arr = string.split(')')
-        this.name = arr[0]
+    var name: String = "f"
+    var symbol: String = ""
+    var stack: String = ""
+    var nameNextState: String = "f"
+    var nextSymbolStack = ""
 
-        //финнальное состояние либо должно не иметь переходов либо имя должно быть f
-        if (name == "f") isFinalState = true
+    constructor(input: String) {
+        // Разделим строку сначала по символу '='
+        val parts = input.split("=")
 
-        if (arr.getOrNull(1) == "")
-        {
-            path = mapOf()
-            isFinalState == true
-            return
-        }
+        // Получим части слева от '=' и справа от '='
+        val leftPart = parts[0].split(",")  // p1, p2, p3
+        val rightPart = parts[1].split(",") // p4, p5
 
-        val pList = mutableMapOf<String, String>()
+        // Присвоим значения переменным
+        val (p1, p2, p3) = leftPart
+        val (p4, p5) = rightPart
 
-        val arrPath = arr[1].split("|")
-        arrPath.forEach {
-            val p = it.split("->")
-            pList.put(p[0], p[1])
-        }
-
-        this.path = pList
+        name = p1
+        symbol = p2
+        stack = p3
+        nameNextState = p4
+        nextSymbolStack = p5
     }
-    constructor(name : String, path : Map<String, String>)
-    {
+
+    constructor( name: String = "f",
+                 symbol: String = "",
+                 stack: String = "",
+                 nameNextState: String = "f",
+                 nextSymbolStack: String = "") {
         this.name = name
-        this.path = path
-        if (name == "f") this.isFinalState = true
-        if (path.isEmpty()) {
-            this.isFinalState = true
-        }
-    }
-    // Добавляем функцию copy
-    fun copy(name: String = this.name, path: Map<String, String> = this.path): State {
-        return State(name, path)
+        this.symbol = symbol
+        this.stack = stack
+        this.nameNextState = nameNextState
+        this.nextSymbolStack = nextSymbolStack
     }
 
-    fun ToString(): String {
-        val pathString : String = path.map { (key, value) ->  key + "->" + value}.joinToString(separator = "|")
-        return name + ")" + pathString
+    fun ToString() =
+        name + "," + symbol  + "," +  stack  + "=" + nameNextState  + "," +  nextSymbolStack
+    fun copy(
+        name: String = this.name,
+        symbol: String = this.symbol,
+        stack: String = this.stack,
+        nameNextState: String = this.nameNextState,
+        nextSymbolStack: String = this.nextSymbolStack
+    ): State {
+        val newState = State("$name,$symbol,$stack=$nameNextState,$nextSymbolStack")
+        return newState
     }
 }

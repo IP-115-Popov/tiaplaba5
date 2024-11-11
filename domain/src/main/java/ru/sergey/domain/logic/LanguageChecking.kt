@@ -1,27 +1,67 @@
 package ru.sergey.domain.logic
 
-import ru.sergey.domain.models.State
+import ru.sergey.State
 
-object LanguageChecking {
-    fun isBelongs(input: String, dka: List<State>, nameStartState : String, maxStep : Int = 20) : Boolean{
-        if (maxStep == 0) return true
-        val nextMaxStep = maxStep - 1
+class VerificationDPMA {
+    companion object {
 
-        var string = input
-        val currentSymbol = input.getOrNull(0)
-        val currentState : State = dka.find { it.name == nameStartState } ?: throw Exception("not find State")
-        if (currentSymbol == null) //строка закончилась
-        {
-            if (currentState.isFinalState) return true
-            else return false
+        fun isPrenadlezhit(nameState : String, chain : String, DPMA : List<State>, maxIterated : Int = 20) : String{
+            if (chain.isEmpty()) return "цепочка пуста"
+            if (!firstVerification(chain, DPMA)) return "Посторонние символы"
+            return Verification(nameState , chain, "Z" , DPMA , maxIterated)
         }
-        val nextStateString = currentState.path.getOrDefault(currentSymbol.toString(), null)
+        fun firstVerification(chain: String, DPMA: List<State>): Boolean {
+            // Собираем все символы из списка состояний
+            val validSymbols : List<String> = DPMA.map { it.symbol }
 
-        if (nextStateString == null) {//коненый афтомат не нашли следующих состаяний куда перейти
-            if (currentSymbol != null) return false //строка пуста
-            else return false
+            // Проверяем каждый символ из цепочки
+            for (char in chain) {
+                // Если символ не найден среди допустимых, возвращаем false
+                if (char.toString() !in validSymbols) {
+                    return false
+                }
+            }
+
+            // Если все символы валидны, возвращаем true
+            return true
         }
+        fun Verification(nameState : String, chain : String, stack : String, DPMA : List<State>, maxIterated : Int = 20): String{
+            //выход
+            if (chain == "" &&  stack == "") return "цепочка подходит"
+            if (chain == "" && stack != "Z" && stack != "") return "цепочка закончилась а стек не пуст"
 
-        return isBelongs(input.drop(1), dka, nextStateString!!, nextMaxStep)
+            //читаем данные из цепочки и стека
+
+            val symbolChain = chain.take(1)
+            val symbolStck = stack.take(1)
+
+            var updatedChein = chain.drop(1)
+            var updatedStck = stack.drop(1)
+
+            val currentState : State = DPMA.find {
+                (
+                        it.name == nameState &&
+                                it.symbol == symbolChain &&
+                                it.stack == symbolStck
+                        )
+            } ?: return "ненашли состояния что бы обработать цепочку"
+
+            val nextSymbolStack = currentState.nextSymbolStack
+            when(nextSymbolStack) {
+                "" -> {
+                    updatedStck = updatedStck
+                }
+                "e" -> {
+                    updatedStck = updatedStck
+                }
+                else -> {
+                    updatedStck = nextSymbolStack + updatedStck
+                }
+            }
+
+
+            val nextNameState = currentState.nameNextState
+            return Verification(nextNameState, updatedChein, updatedStck, DPMA ,maxIterated -1)
+        }
     }
 }
