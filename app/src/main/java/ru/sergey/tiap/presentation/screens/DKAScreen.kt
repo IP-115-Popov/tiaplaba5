@@ -134,7 +134,7 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
     if (showSaveDialog.value) {
         Dialog(onDismissRequest = { showSaveDialog.value = false }) {
             Column(
-                modifier = Modifier.padding(16.dp).background(Pink80, RoundedCornerShape(20.dp)),
+                modifier = Modifier.fillMaxSize().padding(16.dp).background(Pink80, RoundedCornerShape(20.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var selectedItem : String? = null
@@ -150,7 +150,7 @@ fun DKAScreen(vm: DKAScreenViewModel = viewModel()) {
                 Button(onClick = {
                     if (newFileName.value != "")
                     {
-                        if (vm.fileList.any({it : String -> it != newFileName.value})) {
+                        if (!vm.fileList.any({it : String -> it == newFileName.value})) {
                             vm.UploadDKA(newFileName.value)
                             vm.fileList = vm.fileList + newFileName.value
                             saveDKAToast.show()
