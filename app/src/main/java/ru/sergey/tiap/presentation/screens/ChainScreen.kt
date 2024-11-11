@@ -26,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -50,12 +51,7 @@ import ru.sergey.tiap.viewmodel.ChainScreenViewModel
 @Composable
 fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
     val chain = vm.chain.collectAsState()
-    val checkChainToast = Toast.makeText(
-        LocalContext.current, stringResource(R.string.checkingChains), Toast.LENGTH_SHORT
-    )
-    val failCheckChainToast = Toast.makeText(
-        LocalContext.current, stringResource(R.string.fail_check), Toast.LENGTH_SHORT
-    )
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         StyledTextField(chain, placeholderText = "chain", chain.value.isRight, vm)
@@ -81,17 +77,19 @@ fun ChainScreen(vm: ChainScreenViewModel = viewModel()) {
 }
 @Composable
 fun StyledTextField(
-    text: State<Chain>,
+    chain: State<Chain>,
     placeholderText: String,
     isRight: Chain.Status,
     vm: ChainScreenViewModel
 ) {
+
+    val text = remember { mutableStateOf(chain.value.chain) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val showInfoDialog = remember { mutableStateOf(false) }
 
     OutlinedTextField(
         placeholder = { Text(placeholderText) },
-        value = text.value.chain,
+        value = text.value,
         singleLine = true,
         textStyle = TextStyle(fontSize = 25.sp),
         colors = TextFieldDefaults.colors(
@@ -116,7 +114,10 @@ fun StyledTextField(
                 contentDescription = stringResource(R.string.Additional_information),
                 Modifier.clickable { showInfoDialog.value = true })
         },
-        onValueChange = { newText -> text.value.chain = newText },
+        onValueChange = {
+                newText -> text.value = newText
+                vm.updateChain(chain = chain.value.copy(chain = text.value))
+            },
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),
