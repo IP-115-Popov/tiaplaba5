@@ -63,7 +63,7 @@ class VerificationDPMA {
 
             val nextNameState = currentState.nameNextState
 
-            logOut += "\ncurrentState = $currentState symbolChain = $symbolChain symbolStck = $symbolStck -> nextNameState = $nextNameState \n updatedStck = $updatedStck updatedChein = $updatedChein\n\n"
+            logOut += "\ncS = '${currentState.name}' sC = '$symbolChain' sS = '$symbolStck' -> nNS = '$nextNameState' \n uS = '$updatedStck' uC = '$updatedChein'\n\n"
             return Verification(nextNameState, updatedChein, updatedStck, DPMA ,maxIterated -1)
         }
     }
