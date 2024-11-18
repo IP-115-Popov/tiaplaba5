@@ -19,6 +19,8 @@ class ChainScreenViewModel() : ViewModel() {
     ))
     val chain: StateFlow<Chain> = _chain.asStateFlow()
 
+    val _rez = MutableStateFlow("")
+    val rez = _rez.asStateFlow()
 
 
     fun updateChain(chain: Chain) {
@@ -26,12 +28,17 @@ class ChainScreenViewModel() : ViewModel() {
     }
 
     fun checkChain() {
-        if (DPMAClass.DPMA.size < 1) return  //DKA не должен быть пустым
+        if (DPMAClass.DPMA.size < 1) {
+            _rez.value = "DKA не должен быть пустым"
+            return
+        }
 
         val DPMA = DPMAClass.DPMA
 
         val sipleChain = _chain.value.chain
         val rez = VerificationDPMA.isPrenadlezhit("q0", _chain.value.chain, DPMA)
+
+        _rez.value = rez
 
         Log.i("myLog",rez)
 

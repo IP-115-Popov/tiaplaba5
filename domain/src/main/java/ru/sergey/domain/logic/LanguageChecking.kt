@@ -25,10 +25,11 @@ class VerificationDPMA {
             // Если все символы валидны, возвращаем true
             return true
         }
+        var logOut = ""
         fun Verification(nameState : String, chain : String, stack : String, DPMA : List<State>, maxIterated : Int = 20): String{
             //выход
-            if (chain == "" &&  stack == "") return "цепочка подходит"
-            if (chain == "" && stack != "Z" && stack != "") return "цепочка закончилась а стек не пуст"
+            if (chain == "" &&  stack == "") return logOut+"\nцепочка подходит"
+            if (chain == "" && stack != "Z" && stack != "") return logOut+"\nцепочка закончилась а стек не пуст"
 
             //читаем данные из цепочки и стека
 
@@ -44,7 +45,7 @@ class VerificationDPMA {
                                 it.symbol == symbolChain &&
                                 it.stack == symbolStck
                         )
-            } ?: return "ненашли состояния что бы обработать цепочку"
+            } ?: return logOut+"\nненашли состояния что бы обработать цепочку"
 
             val nextSymbolStack = currentState.nextSymbolStack
             when(nextSymbolStack) {
@@ -61,6 +62,8 @@ class VerificationDPMA {
 
 
             val nextNameState = currentState.nameNextState
+
+            logOut += "\ncurrentState = $currentState symbolChain = $symbolChain symbolStck = $symbolStck -> nextNameState = $nextNameState \n updatedStck = $updatedStck updatedChein = $updatedChein\n\n"
             return Verification(nextNameState, updatedChein, updatedStck, DPMA ,maxIterated -1)
         }
     }
