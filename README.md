@@ -9,3 +9,6 @@
 Предусмотреть возможность выполнения перевода любого количества цепочек
 для заданного преобразователя.
 Проверить работу программы на нескольких примерах (задачи 28, 29). 
+
+![image](https://github.com/user-attachments/assets/0f9d66f1-4af3-4d51-9a71-b6fa9e903700)
+![image](https://github.com/user-attachments/assets/ab830f9f-b9ad-473f-9d02-5062bfb9323b)
