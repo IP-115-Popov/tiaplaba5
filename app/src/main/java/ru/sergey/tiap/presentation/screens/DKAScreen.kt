@@ -280,6 +280,7 @@ fun StateItem(index: Int, state: State, vm: DKAScreenViewModel) {
     val stack= remember { mutableStateOf(state.stack) }
     val nameNextState= remember { mutableStateOf(state.nameNextState) }
     val nextSymbolStack= remember { mutableStateOf(state.nextSymbolStack) }
+    val cainSymbol= remember { mutableStateOf(state.cainSymbol) }
     Row {
         Column(modifier = Modifier.weight(1.5f)) {
             Text(text = "Name")
@@ -324,6 +325,15 @@ fun StateItem(index: Int, state: State, vm: DKAScreenViewModel) {
                 onValueChange = { newText ->
                     nextSymbolStack.value = newText
                     vm.updateItem(index, state.copy(nextSymbolStack = nextSymbolStack.value))
+                })
+        }
+        Column(modifier = Modifier.weight(1.5f)) {
+            Text(text = "cainSymbol")
+            TextField(value = cainSymbol.value,
+                textStyle = TextStyle(fontSize = 25.sp),
+                onValueChange = { newText ->
+                    cainSymbol.value = newText
+                    vm.updateItem(index, state.copy(cainSymbol = cainSymbol.value))
                 })
         }
 
